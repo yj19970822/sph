@@ -1,0 +1,41 @@
+@import "./normalize.scss";
+
+$pray: #D9D8D6;
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+
+.rightBorder {
+  border-right: 2px solid #a5a4a2;
+}
+
+@mixin clearfix() {
+    &::after {
+      display: block;
+      clear: both;
+      content: "";
+    }
+  }
+
+/* 属性前端 */
+@mixin webkit($type, $value) {
+    -webkit-#{$type}: $value;
+    -moz-#{$type}: $value;
+    -ms-#{$type}: $value;
+    -o-#{$type}: $value;
+    #{$type}: $value;
+}
+
+@mixin webkitA($type, $value) {  // A => after
+    #{$type}: -webkit-#{$value};
+    #{$type}: -moz-#{$value};
+    #{$type}: -ms-#{$value};
+    #{$type}: -o-#{$value};
+    #{$type}: $value;
+}
