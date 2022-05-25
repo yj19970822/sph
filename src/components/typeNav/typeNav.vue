@@ -2,7 +2,38 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <h2 class="all">全部商品分类</h2>
+      <div @mouseenter="blockEnter" @mouseleave="blockLeave" @click="toSearch">
+        <h2 class="all">全部商品分类</h2>
+        <div class="sort" v-show="showSort">
+          <div class="all-sort-list2">
+            <div class="item" v-for="level1 in category" :key="level1.categoryId">
+              <h3>
+                <a href="##" :data-categoryName="level1.categoryName" :data-category1Id="level1.categoryId">
+                  {{ level1.categoryName }}
+                </a>
+              </h3>
+              <div class="item-list clearfix">
+                <div class="subitem" v-for="level2 in level1.categoryChild" :key="level2.categoryId">
+                  <dl class="fore">
+                    <dt>
+                      <a href="##" :data-categoryName="level2.categoryName" :data-category2Id="level2.categoryId">
+                        {{ level2.categoryName }}
+                      </a>
+                    </dt>
+                    <dd>
+                      <em v-for="level3 in level2.categoryChild" :key="level3.categoryId">
+                        <a href="##" :data-categoryName="level3.categoryName" :data-category3Id="level3.categoryId">
+                          {{ level3.categoryName }}
+                        </a>
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <nav class="nav">
         <a href="###">服装城</a>
         <a href="###">美妆馆</a>
@@ -13,36 +44,6 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort">
-        <div class="all-sort-list2">
-          <div class="item" v-for="level1 in category" :key="level1.categoryId">
-            <h3>
-              <a href="">{{ level1.categoryName }}</a>
-            </h3>
-            <div class="item-list clearfix">
-              <div
-                class="subitem"
-                v-for="level2 in level1.categoryChild"
-                :key="level2.categoryId"
-              >
-                <dl class="fore">
-                  <dt>
-                    <a href="">{{ level2.categoryName }}</a>
-                  </dt>
-                  <dd>
-                    <em
-                      v-for="level3 in level2.categoryChild"
-                      :key="level3.categoryId"
-                    >
-                      <a href="">{{ level3.categoryName }}</a>
-                    </em>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -52,7 +53,43 @@ import { mapState } from "vuex"
 export default {
   name: "TypeNav",
   mounted() {
-    this.$store.dispatch("home/getCatagoryList")
+    if (this.$route.name !== "home") this.showSort = false
+  },
+  data() {
+    return {
+      showSort: true,
+    }
+  },
+  methods: {
+    blockEnter() {
+      if (this.$route.name !== "home") {
+        this.showSort = true
+      }
+    },
+    blockLeave() {
+      if (this.$route.name !== "home") {
+        this.showSort = false
+      }
+    },
+    toSearch(event) {
+      let { categoryname, category1id, category2id, category3id } = event.target.dataset
+      let location = {
+        name: "search",
+      }
+      let query = {}
+      if (categoryname) {
+        query.categoryName = categoryname
+        if (category1id) {
+          query.category1Id = category1id
+        } else if (category2id) {
+          query.category2Id = category2id
+        } else {
+          query.category3Id = category3id
+        }
+        location.query = query
+        this.$router.push(location)
+      }
+    },
   },
   computed: {
     ...mapState({
@@ -71,7 +108,6 @@ export default {
     margin: 0 auto;
     display: flex;
     position: relative;
-
     .all {
       width: 210px;
       height: 45px;
@@ -116,6 +152,10 @@ export default {
             a {
               color: #333;
             }
+
+            &:hover {
+              background-color: #158ecd;
+            }
           }
 
           .item-list {
@@ -147,7 +187,7 @@ export default {
 
                 dt {
                   float: left;
-                  width: 54px;
+                  width: 60px;
                   line-height: 22px;
                   text-align: right;
                   padding: 3px 6px 0 0;
